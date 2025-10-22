@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:animated_text_kit/animated_text_kit.dart';
 
 void main() {
   runApp(const MyApp());
@@ -7,114 +8,166 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Hacker App',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+      theme: ThemeData.dark().copyWith(
+        scaffoldBackgroundColor: Colors.black,
+        primaryColor: Colors.green,
+        textTheme: const TextTheme(
+          bodyLarge: TextStyle(color: Colors.green),
+          bodyMedium: TextStyle(color: Colors.green),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.green,
+            foregroundColor: Colors.black,
+          ),
+        ),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const HackerScreen(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
+class HackerScreen extends StatefulWidget {
+  const HackerScreen({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<HackerScreen> createState() => _HackerScreenState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _HackerScreenState extends State<HackerScreen> {
+  bool _isHacking = false;
+  final List<String> _hackingMessages = [];
+  final ScrollController _scrollController = ScrollController();
 
-  void _incrementCounter() {
+  void _startHacking() {
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+      _isHacking = true;
+      _hackingMessages.clear();
+    });
+
+    _addMessage("Initiating hack sequence...");
+    Future.delayed(const Duration(seconds: 1), () => _addMessage("Bypassing firewall..."));
+    Future.delayed(const Duration(seconds: 2), () => _addMessage("Accessing main server..."));
+    Future.delayed(const Duration(seconds: 3), () => _addMessage("Connection established."));
+    Future.delayed(const Duration(seconds: 4), () => _addMessage("Downloading data... 10%"));
+    Future.delayed(const Duration(seconds: 5), () => _addMessage("Downloading data... 35%"));
+    Future.delayed(const Duration(seconds: 6), () => _addMessage("Downloading data... 78%"));
+    Future.delayed(const Duration(seconds: 7), () => _addMessage("Downloading data... 100%"));
+    Future.delayed(const Duration(seconds: 8), () => _addMessage("Data transfer complete."));
+    Future.delayed(const Duration(seconds: 9), () => _addMessage("Erasing tracks..."));
+    Future.delayed(const Duration(seconds: 10), () => _addMessage("Hack successful. Disconnecting."));
+    Future.delayed(const Duration(seconds: 11), () {
+      setState(() {
+        _isHacking = false;
+      });
+    });
+  }
+
+  void _addMessage(String message) {
+    if (!mounted) return;
+    setState(() {
+      _hackingMessages.add("> $message");
+    });
+    // Scroll to the bottom
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        title: const Text('Hacker Terminal'),
+        backgroundColor: Colors.black,
+        elevation: 0,
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('You have pushed the button this many times:'),
-            Text('$_counter', style: Theme.of(context).textTheme.headlineMedium),
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.all(12.0),
+                decoration: BoxDecoration(
+                  color: Colors.grey[900],
+                  borderRadius: BorderRadius.circular(8.0),
+                  border: Border.all(color: Colors.green.withOpacity(0.5)),
+                ),
+                child: _hackingMessages.isNotEmpty
+                    ? ListView.builder(
+                        controller: _scrollController,
+                        itemCount: _hackingMessages.length,
+                        itemBuilder: (context, index) {
+                          return Text(
+                            _hackingMessages[index],
+                            style: const TextStyle(
+                              fontFamily: 'monospace',
+                              color: Colors.green,
+                              fontSize: 16,
+                            ),
+                          );
+                        },
+                      )
+                    : const Center(
+                        child: Text(
+                          "Awaiting command...",
+                          style: TextStyle(
+                            fontFamily: 'monospace',
+                            color: Colors.green,
+                            fontSize: 18,
+                          ),
+                        ),
+                      ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _isHacking ? null : _startHacking,
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 16.0),
+                backgroundColor: Colors.green,
+                disabledBackgroundColor: Colors.green.withOpacity(0.5),
+              ),
+              child: _isHacking
+                  ? const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
+                          ),
+                        ),
+                        SizedBox(width: 10),
+                        Text(
+                          'HACK IN PROGRESS...',
+                          style: TextStyle(fontSize: 18, color: Colors.black),
+                        ),
+                      ],
+                    )
+                  : const Text(
+                      'INITIATE HACK',
+                      style: TextStyle(fontSize: 18, color: Colors.black),
+                    ),
+            ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
